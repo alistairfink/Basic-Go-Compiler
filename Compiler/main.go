@@ -31,25 +31,41 @@ func main() {
     }
 
     // Token Parsing
-    // TODO: Make this better by separating operators, brackets, etc.
+    // TODO: Separte brackets, special characters, operators, etc. into separate config file
     tokens := []string{}
     currToken := ""
     for _, char := range fileContents {
     	if string(char) == " " || string(char) == "\n" || string(char) == "\r"{
     		if len(currToken) > 0 {
     			tokens = append(tokens, currToken)
-    			println(currToken)
     			currToken = ""
     		}
 
     		continue
+    	} else if string(char) == "{" || string(char) == "}" || string(char) == "(" || string(char) == ")" || string(char) == "+" || string(char) == "-" || string(char) == "/" || string(char) == "*" {
+    		if len(currToken) > 0 {
+				tokens = append(tokens, currToken)
+				currToken = ""
+			}
+
+			tokens = append(tokens, string(char))
+    		continue
     	}
+
 
     	currToken += string(char)
     }
 
+	PrintSliceString(tokens)
 	println()
-	println()
-    println(tokens[:])
     println(string(fileContents[:]))
+}
+
+func PrintSliceString(arr []string) {
+	printable := "[ "
+	for _, element := range arr {
+		printable += element + ", "
+	}
+	printable = printable[:len(printable)-2] + " ]"
+	println(printable)
 }
