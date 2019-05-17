@@ -31,18 +31,18 @@ func main() {
     }
 
     // Token Parsing
-    // TODO: Separte brackets, special characters, operators, etc. into separate config file
+    // TODO: Consider Implementing Regex Matching
     tokens := []string{}
     currToken := ""
     for _, char := range fileContents {
-    	if string(char) == " " || string(char) == "\n" || string(char) == "\r"{
+    	if checkSpecialCharacter(string(char)){
     		if len(currToken) > 0 {
     			tokens = append(tokens, currToken)
     			currToken = ""
     		}
 
     		continue
-    	} else if string(char) == "{" || string(char) == "}" || string(char) == "(" || string(char) == ")" || string(char) == "+" || string(char) == "-" || string(char) == "/" || string(char) == "*" {
+    	} else if checkValidToken(string(char)) {
     		if len(currToken) > 0 {
 				tokens = append(tokens, currToken)
 				currToken = ""
