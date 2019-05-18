@@ -56,6 +56,11 @@ func main() {
     	currToken += string(char)
     }
 
+    // TODO: Parse tokens into syntax tree
+
+    // TODO: Use AST to generate assembly
+    // TODO: Either use shell script or use this to use assembler and then linker to make executables
+
 	PrintSliceString(tokens)
 	println()
     println(string(fileContents[:]))
