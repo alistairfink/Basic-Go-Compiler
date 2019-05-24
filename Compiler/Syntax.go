@@ -1,15 +1,9 @@
 package main
 
-const (
-	DeclaractionType = map[string]int{
-		"FunctionDeclaration": 0,
-		"VariableDeclaration": 1,
-		"Expression": 2,		
-	}
-)
-
 type SyntaxNode struct {
+	name string
 	declarationType int
 	params []interface{}
-	body []SyntaxNode
+	body []*SyntaxNode
+	parent *SyntaxNode
 }

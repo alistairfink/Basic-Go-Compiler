@@ -3,12 +3,14 @@ package main
 import (
 	"os"
     "io/ioutil"
+    "fmt"
+    "github.com/alistairfink/Basic-Go-Compiler/Compiler/DeclarationType"
+    "github.com/alistairfink/Basic-Go-Compiler/Compiler/KeyWords"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		println("Go File Required")
-		return
+        panic(fmt.Sprint("Go File Required"))
 	}
 
 	// Take in File Path
@@ -21,13 +23,13 @@ func main() {
 	// TODO: Make this open in chunks instead of the entire thing in memory
     file, err := os.Open(mainFilePath)
     if err != nil {
-		println("ERROR: ", err.Error())
+        panic(fmt.Sprint("ERROR: ", err.Error()))
     }
 
     defer file.Close()
     fileContents, err := ioutil.ReadAll(file)
     if err != nil {
-		println("ERROR: ", err.Error())
+        panic(fmt.Sprint("ERROR: ", err.Error()))
     }
 
     // Token Parsing
@@ -52,11 +54,56 @@ func main() {
     		continue
     	}
 
-
     	currToken += string(char)
     }
 
-    // TODO: Parse tokens into syntax tree
+    // TODO: Finish other cases
+    variables := make(map[string]int)
+    var currNode *SyntaxNode
+    currNode = nil
+    functions := make(map[string]*SyntaxNode)
+    for i := 0; i < len(tokens); i++ {
+        switch tokens[i] {
+        case KeyWords.Function:
+            if _, exists := functions[tokens[i+1]]; exists {
+                panic(fmt.Sprint("Function Token Already Exists: ", tokens[i+1]))
+            }
+
+            newFunction := SyntaxNode{
+                name: tokens[i+1],
+                declarationType: DeclaractionType.FunctionDeclaration,
+                params: make([]interface{}, 0),
+                body: []*SyntaxNode{},
+                parent: nil,
+            }
+
+            currNode = &newFunction
+            functions[tokens[i+1]] = &newFunction
+            i += 2 
+        case KeyWords.Package:
+
+        case KeyWords.Print:
+
+        case KeyWords.Variable:
+            if _, exists := variables[tokens[i+1]]; exists {
+                panic(fmt.Sprint("Variable Token Already Exists: ", tokens[i+1]))
+            }
+
+            newVar := SyntaxNode{
+                declarationType: DeclaractionType.Integer,
+                name: tokens[i+1],
+                params: make([]interface{}, 0),
+                body: []*SyntaxNode{},
+                parent: currNode,
+            }
+
+            variables[tokens[i+1]] = DeclaractionType.GetValue(tokens[i+2])
+            currNode.body = append(currNode.body, &newVar)
+            i += 2
+        default:
+            panic(fmt.Sprint("Unexpected Token:", tokens[i]))
+        }
+    }
 
     // TODO: Use AST to generate assembly
     // TODO: Either use shell script or use this to use assembler and then linker to make executables
