@@ -79,11 +79,10 @@ func main() {
 
             currNode = &newFunction
             functions[tokens[i+1]] = &newFunction
-            i += 2 
+            i += 3 
         case KeyWords.Package:
-
-        case KeyWords.Print:
-
+            // TODO: Packages to be implemented
+            i++
         case KeyWords.Variable:
             if _, exists := variables[tokens[i+1]]; exists {
                 panic(fmt.Sprint("Variable Token Already Exists: ", tokens[i+1]))
@@ -100,8 +99,50 @@ func main() {
             variables[tokens[i+1]] = DeclaractionType.GetValue(tokens[i+2])
             currNode.body = append(currNode.body, &newVar)
             i += 2
+        case ")":
+            fallthrough
+        case "}":
+            currNode = currNode.parent
         default:
-            panic(fmt.Sprint("Unexpected Token:", tokens[i]))
+            if tokens[i + 1] == "(" {
+                newCall := SyntaxNode{
+                    declarationType: DeclaractionType.Expression,
+                    name: tokens[i],
+                    params: make([]interface{}, 0),
+                    body: []*SyntaxNode{},
+                    parent: currNode,
+                }
+
+                currNode.body = append(currNode.body, &newCall)
+                currNode = &newCall
+                i++
+            // TODO: Add more operators. Move this somewhere else.
+            } else if tokens[i + 1] == "+"{
+                operation := SyntaxNode{
+                    declarationType: DeclaractionType.Operation,
+                    name: tokens[i + 1],
+                    params: make([]interface{}, 0),
+                    body: []*SyntaxNode{},
+                    parent: currNode,
+                }
+
+                operation.params = append(operation.params, tokens[i])
+                operation.params = append(operation.params, tokens[i+2])
+                currNode.body = append(currNode.body, &operation)
+                i += 2
+            } else if _, exists := variables[tokens[i]]; exists {
+                varAssignment := SyntaxNode{
+                    declarationType: DeclaractionType.Assignment,
+                    name: tokens[i],
+                    params: make([]interface{}, 0),
+                    body: []*SyntaxNode{},
+                    parent: currNode,
+                }
+
+                varAssignment.params = append(varAssignment.params, tokens[i + 2])
+                currNode.body = append(currNode.body, &varAssignment)
+                i += 2
+            }
         }
     }
 
