@@ -146,12 +146,37 @@ func main() {
         }
     }
 
+    println("Syntax Tree: ")
+    PrintSyntaxTree(functions["main"], 0)
+
     // TODO: Use AST to generate assembly
     // TODO: Either use shell script or use this to use assembler and then linker to make executables
 
 	PrintSliceString(tokens)
 	println()
     println(string(fileContents[:]))
+}
+
+func PrintSyntaxTree(root *SyntaxNode, indent int) {
+    printable := ""
+    for i := 0; i < indent; i++ {
+        printable += " "
+    }
+
+    printable += "|"
+
+    println(printable + "-----------------------------------")
+    println(printable, "Name:", root.name)
+    println(printable, "Type:", DeclaractionType.GetString(root.declarationType))
+    print(printable, " Params:")
+    for _, param := range root.params {
+        print(" " + param.(string) + ",")
+    }
+    println()
+    println(printable, "Body:")
+    for _, body := range root.body {
+        PrintSyntaxTree(body, indent + 1)
+    }
 }
 
 func PrintSliceString(arr []string) {

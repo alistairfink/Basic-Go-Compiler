@@ -27,6 +27,25 @@ func GetValue(name string) int {
 	case "int":
 		return Integer
 	default:
-		panic(fmt.Sprint("Invalid Declartion Type: ", name))
+		panic(fmt.Sprint("Invalid Declartion Type:", name))
+	}
+}
+
+func GetString(number int) string {
+	switch(number) {
+	case 0:
+		return "FunctionDeclaration"
+	case 1:
+		return "Expression"
+	case 2:
+		return "Assignment"
+	case 3:
+		return "Operation"
+	case 4:
+		fallthrough
+	case 5:
+		return "Integer"
+	default:
+		panic(fmt.Sprint("Invalid Declartion Type:", number))
 	}
 }
